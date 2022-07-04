@@ -7,6 +7,7 @@ import "hardhat/console.sol";
 contract WavePortal {
     uint256 totalWaves;
     mapping(address => uint256) wavers;
+    mapping(address => uint256) public lastWavedAt;
 
     uint256 private seed;
 
@@ -27,6 +28,12 @@ contract WavePortal {
     }
 
     function wave(string memory _message) public {
+        require(
+            lastWavedAt[msg.sender] + 15 minutes < block.timestamp,
+            "Wait 15m"
+        );
+        lastWavedAt[msg.sender] = block.timestamp;
+
         totalWaves += 1;
         wavers[msg.sender] += 1;
         console.log("%s has waved!", msg.sender);
